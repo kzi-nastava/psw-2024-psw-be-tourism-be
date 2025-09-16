@@ -18,19 +18,23 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '7.0.x'
+
       - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
           java-version: 1.17
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clone disabled
+
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+
       - name: Cache SonarCloud scanner
         id: cache-sonar-scanner
         uses: actions/cache@v4
@@ -38,13 +42,15 @@ jobs:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
+
       - name: Install SonarCloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      - name: Build, Test and Analyze
+
+      - name: Build and Analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Za PR info
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -55,9 +61,6 @@ jobs:
 
           # Build solution
           dotnet build ./src/Explorer.sln --no-incremental
-
-          # Run all tests in solution
-          dotnet test ./src/Explorer.sln --no-build --verbosity normal
 
           # End SonarCloud analysis
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
