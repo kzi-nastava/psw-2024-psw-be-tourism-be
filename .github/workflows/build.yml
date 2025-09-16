@@ -51,7 +51,7 @@ jobs:
         shell: powershell
         run: |
           # Start SonarCloud analysis
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"TODO:[SonarCloud Project Key]" /o:"TODO:[SonarCloud Organization Key]" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"kzi-nastava_psw-2024-psw-be-tourism-be" /o:"explorer-psw" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
           # Build solution
           dotnet build ./src/Explorer.sln --no-incremental
